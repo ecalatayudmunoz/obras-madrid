@@ -41,7 +41,7 @@ CAB = """<?xml version="1.0" encoding="UTF-8"?>
  xmlns:cbc-place-ext="urn:dgpe:names:draft:codice-place-ext:schema:xsd:CommonBasicComponents-2">
 <title>Licitaciones</title><id>x</id><updated>2026-10-25T00:00:00+02:00</updated>
 """
-JER = ["Ayuntamiento de Madrid", "Madrid", "Comunidad de Madrid", "ENTIDADES LOCALES"]
+JER = ["Madrid", "Ayuntamientos", "Comunidad de Madrid", "ENTIDADES LOCALES", "Sector Público"]  # como en la PLACSP real
 entradas = [
     entry(1, "300/2025/00123", "Obras de soterramiento de la A-5 en el Paseo de Extremadura, tramo 1",
           "Área de Gobierno de Obras y Equipamientos", JER, "3", "RES", 100_000_000, 82_500_000, "UTE Ejemplo A5"),
@@ -49,11 +49,13 @@ entradas = [
           "Junta de Gobierno de la Ciudad de Madrid", JER, "3", "ADJ", 5_000_000, 4_100_000, "Constructora Ejemplo SA"),
     entry(3, "300/2026/00789", "Servicio de limpieza de colegios", "Distrito de Centro", JER, "2", "PUB", 900_000),
     entry(4, "OB-12/2026", "Obras de urbanización calle Mayor", "Ayuntamiento de Getafe",
-          ["Getafe", "Comunidad de Madrid", "ENTIDADES LOCALES"], "3", "PUB", 1_200_000),
+          ["Getafe", "Ayuntamientos", "Comunidad de Madrid", "ENTIDADES LOCALES", "Sector Público"], "3", "PUB", 1_200_000),
     entry(5, "2026/0099", "Obras de ampliación de la línea 11 de Metro",
           "Consejería de Transportes de la Comunidad de Madrid", ["Comunidad de Madrid"], "3", "PUB", 50_000_000),
     entry(6, "711/2026/01010", "Construcción de escuela infantil en el distrito de Vicálvaro",
           "Distrito de Vicálvaro", JER, "3", "PUB", 2_300_000),
+    entry(7, "MJ-3/2026", "Pavimentación de calles", "Alcaldía del Ayuntamiento de Madridejos",
+          ["Madridejos", "Ayuntamientos", "Toledo", "Castilla - La Mancha", "ENTIDADES LOCALES"], "3", "PUB", 300_000),
 ]
 (D / "pagina1.atom").write_text(CAB + "\n".join(entradas) + "\n</feed>", encoding="utf-8")
 # Segunda versión: el expediente 2 pasa a RES (cambio) → debe quedar en el histórico

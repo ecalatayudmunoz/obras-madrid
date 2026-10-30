@@ -270,9 +270,18 @@ def periodos_desde(desde: str, hoy: Optional[date] = None) -> list[str]:
 
 
 def es_de_madrid(exp: Expediente, incluir: list[str], excluir: list[str]) -> bool:
-    """El órgano o alguno de sus superiores pertenece al Ayuntamiento.
-    Se excluye si el propio órgano (no sus superiores) es de otra administración."""
-    if any(p in normalizar(exp.organo) for p in excluir):
+    """El contrato es del Ayuntamiento de Madrid.
+
+    En la PLACSP la jerarquía es: órgano > Madrid > Ayuntamientos > Comunidad de Madrid > ...
+    Se acepta si el municipio de la jerarquía es exactamente «Madrid», o si el nombre del
+    órgano contiene un patrón de `incluir` como palabras completas (así «Madridejos» no entra).
+    Se excluye si el propio órgano es de otra administración (p. ej. la Comunidad de Madrid).
+    """
+    organo = normalizar(exp.organo)
+    if any(re.search(rf"\b{re.escape(p)}\b", organo) for p in excluir):
         return False
-    nombres = [normalizar(n) for n in [exp.organo, *exp.organos_superiores]]
-    return any(p in n for n in nombres for p in incluir)
+    sup = [normalizar(n) for n in exp.organos_superiores]
+    for a, b in zip(sup, sup[1:]):
+        if a == "madrid" and b == "ayuntamientos":
+            return True
+    return any(re.search(rf"\b{re.escape(p)}\b", n) for n in [organo, *sup] for p in incluir)
