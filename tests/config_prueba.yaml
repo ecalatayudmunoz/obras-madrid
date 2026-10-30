@@ -1,0 +1,7 @@
+placsp: {feed_actual: "", zip_mensual: "", meses: [], max_paginas: 1}
+filtro:
+  tipos_contrato: ["3"]
+  organos_incluir: ["ayuntamiento de madrid", "junta de gobierno de la ciudad de madrid", "ciudad de madrid"]
+  organos_excluir: ["comunidad de madrid"]
+excel_obras_ejecucion: {origen: "tests/muestras/obras_ejecucion.xlsx"}
+base_datos: "datos_prueba/obras.sqlite"

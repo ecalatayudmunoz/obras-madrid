@@ -1,0 +1,31 @@
+# Configuración de la carga · Obras de Madrid (Fase 1)
+
+placsp:
+  # Feed completo de licitaciones de perfiles alojados en la Plataforma (actualización diaria)
+  feed_actual: "https://contrataciondelestado.es/sindicacion/sindicacion_643/licitacionesPerfilesContratanteCompleto3.atom"
+  # Zips de la PLACSP: {yyyymm} es 'AAAAMM' (meses del año en curso) o 'AAAA' (años cerrados)
+  zip_mensual: "https://contrataciondelestado.es/sindicacion/sindicacion_643/licitacionesPerfilesContratanteCompleto3_{yyyymm}.zip"
+  # La carga diaria repasa también los zips de los últimos N meses.
+  # El histórico completo se carga una sola vez con:  python cargar.py --desde 2012
+  meses_recientes: 2
+  # Límite de páginas del feed actual (cada página ~500 entradas). 0 = sin límite
+  max_paginas: 40
+
+filtro:
+  # Tipo de contrato CODICE: 3 = Obras
+  tipos_contrato: ["3"]
+  # Se acepta la entrada si el órgano o cualquiera de sus órganos superiores
+  # coincide con alguno de estos patrones (sin tildes, minúsculas)
+  organos_incluir:
+    - "ayuntamiento de madrid"
+    - "junta de gobierno de la ciudad de madrid"
+    - "ciudad de madrid"
+  organos_excluir:
+    - "comunidad de madrid"   # se añadirá en la Fase 4
+
+excel_obras_ejecucion:
+  # Ruta local o URL del Excel "Obras en ejecución 2023-2027" (datos.madrid.es).
+  # Si falla la descarga, la carga sigue solo con PLACSP y lo avisa.
+  origen: "datos/obras_ejecucion.xlsx"
+
+base_datos: "datos/obras.sqlite"

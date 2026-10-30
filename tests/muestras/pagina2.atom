@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0"
+ xmlns:cac="urn:dgpe:names:draft:codice:schema:xsd:CommonAggregateComponents-2"
+ xmlns:cbc="urn:dgpe:names:draft:codice:schema:xsd:CommonBasicComponents-2"
+ xmlns:cac-place-ext="urn:dgpe:names:draft:codice-place-ext:schema:xsd:CommonAggregateComponents-2"
+ xmlns:cbc-place-ext="urn:dgpe:names:draft:codice-place-ext:schema:xsd:CommonBasicComponents-2">
+<title>Licitaciones</title><id>x</id><updated>2026-10-25T00:00:00+02:00</updated>
+<entry>
+  <id>https://contrataciondelestado.es/sindicacion/licitacionesPerfilContratante/2</id>
+  <link href="https://contrataciondelestado.es/wps/poc?uri=deeplink:detalle_licitacion&amp;idEvl=2"/>
+  <summary type="text">Id licitación: 300/2026/00456</summary><title>Remodelación de la Plaza de España y entorno, fase final</title><updated>2026-10-25T09:00:00+02:00</updated>
+  <cac-place-ext:ContractFolderStatus>
+    <cbc:ContractFolderID>300/2026/00456</cbc:ContractFolderID>
+    <cbc-place-ext:ContractFolderStatusCode listURI="x">RES</cbc-place-ext:ContractFolderStatusCode>
+    <cac-place-ext:LocatedContractingParty><cac:Party><cac:PartyName><cbc:Name>Junta de Gobierno de la Ciudad de Madrid</cbc:Name></cac:PartyName></cac:Party><cac-place-ext:ParentLocatedParty><cac:PartyName><cbc:Name>Ayuntamiento de Madrid</cbc:Name></cac:PartyName><cac-place-ext:ParentLocatedParty><cac:PartyName><cbc:Name>Madrid</cbc:Name></cac:PartyName><cac-place-ext:ParentLocatedParty><cac:PartyName><cbc:Name>Comunidad de Madrid</cbc:Name></cac:PartyName><cac-place-ext:ParentLocatedParty><cac:PartyName><cbc:Name>ENTIDADES LOCALES</cbc:Name></cac:PartyName></cac-place-ext:ParentLocatedParty></cac-place-ext:ParentLocatedParty></cac-place-ext:ParentLocatedParty></cac-place-ext:ParentLocatedParty></cac-place-ext:LocatedContractingParty>
+    <cac:ProcurementProject><cbc:Name>Remodelación de la Plaza de España y entorno, fase final</cbc:Name><cbc:TypeCode listURI="x">3</cbc:TypeCode>
+      <cac:BudgetAmount><cbc:EstimatedOverallContractAmount currencyID="EUR">5000000</cbc:EstimatedOverallContractAmount>
+        <cbc:TotalAmount currencyID="EUR">6050000.0</cbc:TotalAmount><cbc:TaxExclusiveAmount currencyID="EUR">5000000</cbc:TaxExclusiveAmount></cac:BudgetAmount>
+      <cac:RequiredCommodityClassification><cbc:ItemClassificationCode listURI="x">45233000</cbc:ItemClassificationCode></cac:RequiredCommodityClassification>
+      <cac:RealizedLocation><cbc:CountrySubentity>Madrid</cbc:CountrySubentity><cac:Address><cbc:CityName>Madrid</cbc:CityName></cac:Address></cac:RealizedLocation>
+      <cac:PlannedPeriod><cbc:DurationMeasure unitCode="MON">18</cbc:DurationMeasure></cac:PlannedPeriod>
+    </cac:ProcurementProject><cac:TenderResult><cbc:ResultCode>8</cbc:ResultCode><cbc:AwardDate>2026-09-15</cbc:AwardDate>
+          <cac:WinningParty><cac:PartyIdentification><cbc:ID schemeName="NIF">A00000000</cbc:ID></cac:PartyIdentification>
+          <cac:PartyName><cbc:Name>Constructora Ejemplo SA</cbc:Name></cac:PartyName></cac:WinningParty>
+          <cac:AwardedTenderedProject><cac:LegalMonetaryTotal><cbc:TaxExclusiveAmount currencyID="EUR">4100000</cbc:TaxExclusiveAmount>
+          </cac:LegalMonetaryTotal></cac:AwardedTenderedProject></cac:TenderResult>
+  </cac-place-ext:ContractFolderStatus>
+</entry>
+<at:deleted-entry ref='x' when='2026-10-25T00:00:00+02:00'/></feed>

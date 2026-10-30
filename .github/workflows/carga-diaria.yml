@@ -1,0 +1,72 @@
+name: Carga diaria y web
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC (≈ 04:17/05:17 en Madrid)
+  workflow_dispatch:
+    inputs:
+      desde:
+        description: "Carga histórica desde AAAA o AAAAMM (vacío = carga diaria normal)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write   # guardar la base en el repositorio
+  pages: write      # publicar la web
+  id-token: write
+
+concurrency:
+  group: carga-diaria
+  cancel-in-progress: false
+
+jobs:
+  cargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340   # la carga histórica completa puede tardar horas
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Pruebas con datos de muestra
+        run: python -m pytest -q
+
+      - name: Descargar fuentes, cruzar y guardar
+        run: |
+          if [ -n "${{ github.event.inputs.desde }}" ]; then
+            python cargar.py --desde "${{ github.event.inputs.desde }}"
+          else
+            python cargar.py
+          fi
+
+      - name: Generar la web
+        run: python generar_web.py
+
+      - name: Guardar base e informe en el repositorio
+        run: |
+          git config user.name  "obras-madrid-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add datos/
+          git diff --cached --quiet || git commit -m "Carga $(date -u +%F)"
+          git push
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: publicar
+
+  publicar:
+    needs: cargar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
+# Si algo falla, el job queda en rojo, la web sigue con los datos del día anterior
+# y GitHub envía un email al propietario del repositorio.

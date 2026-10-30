@@ -1,0 +1,495 @@
+<title>Obras de Madrid</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Obras públicas de la ciudad de Madrid: qué se hace, dónde, cuánto cuesta, quién la hace y si cumple plazo. Solo datos oficiales.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: herramienta de consulta. Cabecera con buscador, pestañas, lista + mapa lado a lado
+   (apilados en móvil) y ficha de obra como panel. Franja de valla de obra como única firma visual. */
+:root {
+  --bg: #F2F3F1; --surface: #FFFFFF; --sunk: #E8EAE6; --line: #D6DAD3;
+  --fg: #161B22; --muted: #59626C; --ink: #1B2433; --on-ink: #FFFFFF;
+  --senal: #F2C230;
+  --st-lic: #6A4FB6; --st-adj: #A86A12; --st-eje: #1D66C9; --st-ter: #2C7A4B; --st-anu: #7A828C;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0F1318; --surface: #161B22; --sunk: #1D232C; --line: #2B323C;
+  --fg: #E7EAED; --muted: #9AA3AD; --ink: #E7EAED; --on-ink: #0F1318;
+  --senal: #E9B925;
+  --st-lic: #A68CF0; --st-adj: #E0A346; --st-eje: #5EA0F2; --st-ter: #5DBE85; --st-anu: #8C949E;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0F1318; --surface: #161B22; --sunk: #1D232C; --line: #2B323C;
+  --fg: #E7EAED; --muted: #9AA3AD; --ink: #E7EAED; --on-ink: #0F1318;
+  --senal: #E9B925;
+  --st-lic: #A68CF0; --st-adj: #E0A346; --st-eje: #5EA0F2; --st-ter: #5DBE85; --st-anu: #8C949E;
+  color-scheme: dark; }
+
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body); display: flex; flex-direction: column; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+a { color: inherit; text-underline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--senal); outline-offset: 2px; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+/* Cabecera */
+.valla { height: 6px; background: repeating-linear-gradient(-45deg, var(--senal) 0 10px, var(--ink) 10px 20px); }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-in { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-block: 12px; }
+.marca { display: flex; flex-direction: column; min-width: 0; }
+.marca h1 { margin: 0; font: 800 26px/1 var(--font-display); font-stretch: 78%; letter-spacing: .01em; text-transform: uppercase; }
+.marca small { color: var(--muted); font-size: 13px; }
+.buscar { flex: 1 1 280px; display: flex; min-width: 0; }
+.buscar input { width: 100%; min-width: 0; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); color: var(--fg); }
+.buscar input::placeholder { color: var(--muted); }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; padding-block: 0; }
+nav.tabs a { padding: 10px 12px; text-decoration: none; color: var(--muted); font: 600 15px var(--font-display); font-stretch: 90%; border-bottom: 3px solid transparent; white-space: nowrap; }
+nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--senal); }
+.aviso { background: var(--senal); color: #1B2433; font-size: 13px; padding-block: 6px; }
+
+/* Filtros */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-block: 10px; border-bottom: 1px solid var(--line); background: var(--bg); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.chip[aria-pressed="false"] { opacity: .55; background: transparent; }
+.chip[aria-pressed="false"] .dot { background: transparent !important; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid currentColor; flex: none; }
+select { font: inherit; font-size: 13px; padding: 5px 8px; border-radius: var(--r); border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.cuenta { margin-left: auto; color: var(--muted); font-size: 13px; }
+
+.e-lic { color: var(--st-lic); } .e-adj { color: var(--st-adj); } .e-eje { color: var(--st-eje); }
+.e-ter { color: var(--st-ter); } .e-anu { color: var(--st-anu); }
+.dot.e-lic { background: var(--st-lic); } .dot.e-adj { background: var(--st-adj); } .dot.e-eje { background: var(--st-eje); }
+.dot.e-ter { background: var(--st-ter); } .dot.e-anu { background: var(--st-anu); }
+.pill { display: inline-flex; align-items: center; gap: 5px; font: 600 12px var(--font-body); text-transform: uppercase; letter-spacing: .05em; }
+
+/* Vista mapa */
+main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.vista[hidden] { display: none; }
+#v-mapa { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(320px, 420px) 1fr; }
+#lista { overflow-y: auto; border-right: 1px solid var(--line); background: var(--surface); min-width: 0; }
+#mapa { min-height: 300px; background: var(--sunk); }
+.obra { display: grid; gap: 3px; padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; font: inherit; color: inherit; }
+.obra:hover, .obra.activa { background: var(--sunk); }
+.obra h3 { margin: 0; font: 600 15px/1.3 var(--font-body); text-wrap: pretty; }
+.obra .meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); }
+.obra .importe { font-family: var(--font-data); font-size: 13px; color: var(--fg); }
+.vacio { padding: 24px 16px; color: var(--muted); }
+
+/* Archivo, cifras, glosario */
+.pagina { flex: 1; overflow-y: auto; padding-block: 20px 40px; }
+.pagina .ancho { max-width: 980px; margin: 0 auto; }
+.pagina h2 { font: 800 30px/1.1 var(--font-display); font-stretch: 80%; text-transform: uppercase; margin: 0 0 6px; text-wrap: balance; }
+.pagina h3 { font: 700 18px var(--font-display); font-stretch: 90%; margin: 28px 0 8px; }
+.intro { color: var(--muted); max-width: 65ch; margin: 0 0 16px; }
+.anio { display: grid; grid-template-columns: 72px 1fr; gap: 16px; border-top: 1px solid var(--line); padding-block: 14px; }
+.anio > .num { font-size: 22px; font-weight: 500; color: var(--muted); }
+.anio .obras-anio { display: grid; gap: 2px; min-width: 0; }
+.anio .obra { padding: 8px 10px; border-radius: var(--r); border: 0; }
+.tabla { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font: 600 12px var(--font-body); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--sunk); }
+td.n, th.n { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+dl.glosario { display: grid; gap: 14px; max-width: 70ch; }
+dl.glosario dt { font: 700 16px var(--font-display); font-stretch: 90%; }
+dl.glosario dd { margin: 2px 0 0; color: var(--muted); }
+.boton { display: inline-flex; padding: 8px 14px; border-radius: var(--r); background: var(--ink); color: var(--on-ink); text-decoration: none; font-weight: 700; font-size: 14px; }
+
+/* Ficha */
+#ficha { position: fixed; z-index: 1200; top: 0; right: 0; bottom: 0; width: min(540px, 100%); background: var(--surface); border-left: 1px solid var(--line); box-shadow: -12px 0 32px rgb(0 0 0 / .18); overflow-y: auto; padding-top: env(safe-area-inset-top, 0px); padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); padding-right: env(safe-area-inset-right, 0px); }
+#ficha .cab { position: sticky; top: 0; background: var(--surface); display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+.cerrar { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: var(--r); padding: 6px 12px; cursor: pointer; }
+.ficha-in { padding: 16px 20px; display: grid; gap: 22px; }
+.ficha-in h2 { margin: 0; font: 700 24px/1.15 var(--font-display); font-stretch: 85%; text-wrap: balance; }
+.exp { font-family: var(--font-data); font-size: 13px; color: var(--muted); }
+.bloque h4 { margin: 0 0 8px; font: 600 12px var(--font-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.datos { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; gap: 6px 12px; margin: 0; }
+.datos dt { color: var(--muted); font-size: 14px; }
+.datos dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.fte { display: block; font-size: 11px; color: var(--muted); }
+.dinero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cifra { background: var(--sunk); border-radius: var(--r); padding: 10px 12px; min-width: 0; }
+.cifra span { display: block; font-size: 12px; color: var(--muted); }
+.cifra strong { font: 500 18px var(--font-data); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.linea { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: grid; gap: 10px; }
+.linea li { position: relative; }
+.linea li::before { content: ""; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); border: 2px solid var(--muted); }
+.linea li.hecho::before { background: var(--fg); border-color: var(--fg); }
+.linea .f { font-family: var(--font-data); font-size: 13px; }
+.nota { font-size: 13px; color: var(--muted); }
+.fuentes { display: grid; gap: 8px; }
+.fuentes a { font-weight: 700; }
+
+@media (max-width: 760px) {
+  #v-mapa { grid-template-columns: 1fr; grid-template-rows: 42vh auto; overflow-y: auto; }
+  #mapa { order: -1; }
+  #lista { border-right: 0; overflow: visible; }
+  .cuenta { margin-left: 0; width: 100%; }
+  .marca h1 { font-size: 22px; }
+  .anio { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* Leaflet 1.9 · reglas mínimas (su hoja de estilos no puede cargarse desde CDN) */
+.leaflet-pane, .leaflet-tile, .leaflet-marker-icon, .leaflet-tile-container, .leaflet-pane > svg, .leaflet-pane > canvas, .leaflet-layer { position: absolute; left: 0; top: 0; }
+.leaflet-container { overflow: hidden; -webkit-tap-highlight-color: transparent; font: inherit; outline-offset: 1px; }
+.leaflet-tile { user-select: none; visibility: hidden; } .leaflet-tile-loaded { visibility: inherit; }
+.leaflet-container img.leaflet-tile { max-width: none !important; max-height: none !important; }
+.leaflet-container .leaflet-overlay-pane svg { max-width: none !important; max-height: none !important; }
+.leaflet-pane { z-index: 400; } .leaflet-tile-pane { z-index: 200; } .leaflet-overlay-pane { z-index: 400; }
+.leaflet-marker-pane { z-index: 600; } .leaflet-tooltip-pane { z-index: 650; } .leaflet-popup-pane { z-index: 700; }
+.leaflet-zoom-animated { transform-origin: 0 0; }
+.leaflet-zoom-anim .leaflet-zoom-animated { transition: transform .25s cubic-bezier(0,0,.25,1); }
+.leaflet-interactive { cursor: pointer; }
+.leaflet-control { position: relative; z-index: 800; pointer-events: auto; float: left; clear: both; }
+.leaflet-top, .leaflet-bottom { position: absolute; z-index: 1000; pointer-events: none; }
+.leaflet-top { top: 0; } .leaflet-bottom { bottom: 0; } .leaflet-left { left: 0; } .leaflet-right { right: 0; }
+.leaflet-top .leaflet-control { margin-top: 10px; } .leaflet-left .leaflet-control { margin-left: 10px; }
+.leaflet-right .leaflet-control { float: right; margin-right: 10px; } .leaflet-bottom .leaflet-control { margin-bottom: 0; }
+.leaflet-control-zoom { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.leaflet-control-zoom a { display: block; width: 32px; height: 32px; line-height: 30px; text-align: center; text-decoration: none; font-size: 20px; color: var(--fg); }
+.leaflet-control-zoom a + a { border-top: 1px solid var(--line); }
+.leaflet-control-attribution { font-size: 11px; padding: 1px 6px; background: var(--surface); color: var(--muted); opacity: .9; }
+.leaflet-tooltip { position: absolute; pointer-events: none; white-space: nowrap; }
+.etiqueta-distrito { font: 600 11px var(--font-display); font-stretch: 85%; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: none; border: 0; box-shadow: none; transform: translate(-50%, -50%); }
+.tip-obra { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: var(--r); padding: 4px 8px; font-size: 13px; max-width: 260px; white-space: normal; }
+</style>
+
+<div class="valla" aria-hidden="true"></div>
+<header class="top">
+  <div class="top-in gutter">
+    <div class="marca">
+      <h1>Obras de Madrid</h1>
+      <small id="actualizado">Datos oficiales de contratación pública</small>
+    </div>
+    <label class="buscar" for="q">
+      <span hidden>Buscar</span>
+      <input id="q" type="search" placeholder="Calle, distrito, empresa o nº de expediente" autocomplete="off">
+    </label>
+  </div>
+  <nav class="tabs gutter" aria-label="Secciones">
+    <a href="#mapa" data-v="mapa">Mapa</a>
+    <a href="#archivo" data-v="archivo">Obras terminadas</a>
+    <a href="#cifras" data-v="cifras">Cifras por distrito</a>
+    <a href="#glosario" data-v="glosario">Cómo leer los datos</a>
+  </nav>
+</header>
+<div class="aviso gutter" id="aviso" hidden></div>
+
+<main>
+  <section class="vista" id="v-mapa" aria-label="Mapa y lista de obras">
+    <div id="lista-wrap" style="display:contents">
+      <div id="lista">
+        <div class="filtros gutter" id="filtros"></div>
+        <div id="items"></div>
+      </div>
+    </div>
+    <div id="mapa" role="region" aria-label="Mapa de obras"></div>
+  </section>
+
+  <section class="vista pagina gutter" id="v-archivo" hidden>
+    <div class="ancho">
+      <h2>Obras terminadas</h2>
+      <p class="intro">Obras que alguna fuente oficial da por terminadas, ordenadas por año. Nada se borra: cada obra conserva su ficha con importes, plazos y cambios.</p>
+      <div class="filtros" style="padding-inline:0">
+        <select id="arch-distrito" aria-label="Distrito"></select>
+        <span class="cuenta" id="arch-cuenta"></span>
+      </div>
+      <div id="arch-lista"></div>
+      <h3>Contratos antiguos sin fecha de fin publicada</h3>
+      <p class="intro">Contratos adjudicados hace más de tres años de los que ninguna fuente publica si la obra terminó. Se muestran aparte para no darlos por terminados sin un dato que lo diga.</p>
+      <div id="arch-sin-fin"></div>
+    </div>
+  </section>
+
+  <section class="vista pagina gutter" id="v-cifras" hidden>
+    <div class="ancho">
+      <h2>Cifras por distrito</h2>
+      <p class="intro">Importes sin IVA. La desviación media compara la fecha de fin real con la prevista, solo en obras que tienen las dos.</p>
+      <div class="tabla"><table id="t-distritos"></table></div>
+      <h3>Empresas con más contratos</h3>
+      <div class="tabla"><table id="t-empresas"></table></div>
+      <p id="descarga" style="margin-top:20px"></p>
+    </div>
+  </section>
+
+  <section class="vista pagina gutter" id="v-glosario" hidden>
+    <div class="ancho">
+      <h2>Cómo leer los datos</h2>
+      <p class="intro">Esta web reúne datos que ya son públicos y los muestra juntos. No añade opiniones: solo datos de las fuentes y diferencias calculadas a partir de ellos.</p>
+      <h3>Estados de una obra</h3>
+      <dl class="glosario">
+        <dt><span class="pill e-lic"><span class="dot e-lic"></span>En licitación</span></dt><dd>El Ayuntamiento ha publicado el concurso y las empresas presentan ofertas.</dd>
+        <dt><span class="pill e-adj"><span class="dot e-adj"></span>Adjudicada</span></dt><dd>Hay empresa elegida y contrato. Las fuentes de contratación no informan del avance de la obra, así que este estado no dice si ya ha empezado.</dd>
+        <dt><span class="pill e-eje"><span class="dot e-eje"></span>En ejecución</span></dt><dd>El Ayuntamiento la incluye en su relación de obras en ejecución.</dd>
+        <dt><span class="pill e-ter"><span class="dot e-ter"></span>Terminada</span></dt><dd>Una fuente oficial publica su fecha de fin o la da por terminada.</dd>
+      </dl>
+      <h3>Términos</h3>
+      <dl class="glosario">
+        <dt>Expediente</dt><dd>Número que identifica el contrato, por ejemplo 300/2025/00123. Sirve para encontrarlo en cualquier fuente oficial.</dd>
+        <dt>Presupuesto de licitación</dt><dd>Lo máximo que el Ayuntamiento está dispuesto a pagar, sin IVA.</dd>
+        <dt>Importe de adjudicación</dt><dd>Lo que ofreció la empresa ganadora, sin IVA.</dd>
+        <dt>Baja</dt><dd>Diferencia en porcentaje entre el presupuesto de licitación y el importe de adjudicación.</dd>
+        <dt>Modificado</dt><dd>Cambio aprobado en un contrato ya firmado: más obra, otro importe u otro plazo.</dd>
+        <dt>Prórroga</dt><dd>Ampliación del plazo de un contrato.</dd>
+        <dt>Penalidad</dt><dd>Descuento que se impone a la empresa por incumplir, por ejemplo por retraso.</dd>
+        <dt>Acuerdo marco</dt><dd>Contrato que agrupa muchas obras pequeñas que se encargan después por separado.</dd>
+        <dt>Fin teórico</dt><dd>Fecha de inicio (o de adjudicación, si no hay inicio) más el plazo del contrato. Es un cálculo, no una fecha publicada.</dd>
+        <dt>Ubicación aproximada</dt><dd>Cuando la fuente solo indica el distrito, el punto se coloca cerca del centro del distrito.</dd>
+      </dl>
+      <h3>Fuentes</h3>
+      <dl class="glosario">
+        <dt>Plataforma de Contratación del Sector Público</dt><dd>Licitaciones, adjudicaciones, importes y empresas. Se descarga cada noche.</dd>
+        <dt>Ayuntamiento de Madrid · Obras en ejecución 2023-2027</dt><dd>Calles afectadas, fechas reales, estado de la obra y penalidades.</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<aside id="ficha" hidden aria-labelledby="ficha-titulo"></aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+window.__OBRAS = /*DATOS*/null/*FIN*/;
+</script>
+<script>
+(() => {
+  const ESTADOS = [
+    ["en licitación", "lic", "En licitación"], ["adjudicada", "adj", "Adjudicada"],
+    ["en ejecución", "eje", "En ejecución"], ["terminada", "ter", "Terminada"], ["anulada", "anu", "Anulada"],
+  ];
+  const CLASE = Object.fromEntries(ESTADOS.map(([k, c]) => [k, c]));
+  const NOMBRE = Object.fromEntries(ESTADOS.map(([k, , n]) => [k, n]));
+  const DISTRITOS = {
+    "Centro": [40.4155, -3.7074], "Arganzuela": [40.3980, -3.6950], "Retiro": [40.4110, -3.6760],
+    "Salamanca": [40.4300, -3.6770], "Chamartín": [40.4580, -3.6770], "Tetuán": [40.4600, -3.6990],
+    "Chamberí": [40.4340, -3.7040], "Fuencarral-El Pardo": [40.4900, -3.7100], "Moncloa-Aravaca": [40.4350, -3.7400],
+    "Latina": [40.3960, -3.7520], "Carabanchel": [40.3820, -3.7380], "Usera": [40.3830, -3.7060],
+    "Puente de Vallecas": [40.3910, -3.6640], "Moratalaz": [40.4070, -3.6440], "Ciudad Lineal": [40.4440, -3.6520],
+    "Hortaleza": [40.4720, -3.6420], "Villaverde": [40.3460, -3.7000], "Villa de Vallecas": [40.3720, -3.6200],
+    "Vicálvaro": [40.4040, -3.6050], "San Blas-Canillejas": [40.4300, -3.6100], "Barajas": [40.4730, -3.5800],
+  };
+  const euros = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const eur = v => v == null ? "—" : euros.format(v);
+  const fecha = s => s ? s.slice(0, 10).split("-").reverse().join("/") : "—";
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const token = id => "obra-" + id.replace(/[^A-Za-z0-9]+/g, "-");
+  const $ = s => document.querySelector(s);
+  const PLAZO = { MON: ["mes", "meses"], DAY: ["día", "días"], ANN: ["año", "años"], WEE: ["semana", "semanas"] };
+
+  let OBRAS = [], META = {}, mapa, capa, marcadores = new Map();
+  const estado = { q: "", estados: new Set(["en licitación", "adjudicada", "en ejecución", "terminada"]), distrito: "" };
+  try { const g = JSON.parse(localStorage.getItem("om-filtros") || "null"); if (g) { estado.estados = new Set(g.estados); estado.distrito = g.distrito || ""; } } catch (e) {}
+  const guardar = () => { try { localStorage.setItem("om-filtros", JSON.stringify({ estados: [...estado.estados], distrito: estado.distrito })); } catch (e) {} };
+
+  function pill(e) { const c = CLASE[e] || "anu"; return `<span class="pill e-${c}"><span class="dot e-${c}"></span>${esc(NOMBRE[e] || e)}</span>`; }
+
+  function coincide(o) {
+    if (!estado.estados.has(o.estado)) return false;
+    if (estado.distrito && o.distrito !== estado.distrito) return false;
+    if (!estado.q) return true;
+    const texto = norm([o.titulo, o.viales, o.distrito, o.empresa, o.expediente, o.organo].join(" "));
+    return norm(estado.q).split(/\s+/).every(p => texto.includes(p));
+  }
+
+  function itemHTML(o) {
+    return `<button class="obra" data-id="${esc(o.id)}">
+      ${pill(o.estado)}
+      <h3>${esc(o.titulo)}</h3>
+      <div class="meta"><span>${esc(o.distrito || "Sin distrito")}</span><span>${esc(o.empresa || "Sin empresa adjudicataria")}</span><span class="num">${o.anio}</span></div>
+      <div class="importe">${o.adjudicacion != null ? eur(o.adjudicacion) + " adjudicado" : o.licitacion != null ? eur(o.licitacion) + " licitación" : ""}</div>
+    </button>`;
+  }
+
+  function pintarFiltros() {
+    const distritos = Object.keys(DISTRITOS).sort((a, b) => a.localeCompare(b, "es"));
+    $("#filtros").innerHTML = ESTADOS.map(([k, c, n]) =>
+      `<button class="chip e-${c}" data-estado="${k}" aria-pressed="${estado.estados.has(k)}"><span class="dot e-${c}"></span><span style="color:var(--fg)">${n}</span></button>`).join("") +
+      `<select id="f-distrito" aria-label="Distrito"><option value="">Todos los distritos</option>${distritos.map(d => `<option ${d === estado.distrito ? "selected" : ""}>${d}</option>`).join("")}</select>
+       <span class="cuenta" id="cuenta"></span>`;
+    $("#filtros").addEventListener("click", ev => {
+      const b = ev.target.closest("[data-estado]"); if (!b) return;
+      const k = b.dataset.estado; estado.estados.has(k) ? estado.estados.delete(k) : estado.estados.add(k);
+      b.setAttribute("aria-pressed", estado.estados.has(k)); guardar(); pintarLista();
+    });
+    $("#f-distrito").addEventListener("change", ev => { estado.distrito = ev.target.value; guardar(); pintarLista(true); });
+  }
+
+  function pintarLista(encuadrar) {
+    const vis = OBRAS.filter(coincide).sort((a, b) => b.anio - a.anio || (b.adjudicacion || b.licitacion || 0) - (a.adjudicacion || a.licitacion || 0));
+    $("#cuenta").textContent = `${vis.length} de ${OBRAS.length} obras`;
+    $("#items").innerHTML = vis.length ? vis.map(itemHTML).join("") : `<p class="vacio gutter">Ninguna obra coincide con la búsqueda. Prueba con otra calle o activa más estados.</p>`;
+    if (!mapa) return;
+    capa.clearLayers(); marcadores.clear();
+    const ids = new Set(vis.map(o => o.id));
+    OBRAS.filter(o => ids.has(o.id) && o.lat != null).forEach(o => {
+      const color = getComputedStyle(document.documentElement).getPropertyValue("--st-" + (CLASE[o.estado] || "anu")).trim();
+      const m = L.circleMarker([o.lat, o.lon], { radius: 7, color: color, weight: 2, fillColor: color, fillOpacity: o.estado === "terminada" ? .35 : .85 })
+        .bindTooltip(`<strong>${esc(o.titulo)}</strong>`, { className: "tip-obra", direction: "top", offset: [0, -6] })
+        .on("click", () => abrir(o.id));
+      m.addTo(capa); marcadores.set(o.id, m);
+    });
+    if (encuadrar && marcadores.size) mapa.fitBounds(capa.getBounds(), { padding: [30, 30], maxZoom: 14 });
+  }
+
+  function iniciarMapa() {
+    if (!window.L) { $("#mapa").innerHTML = `<p class="vacio">No se ha podido cargar el mapa. La lista sigue disponible.</p>`; return; }
+    mapa = L.map("mapa", { zoomControl: true, attributionControl: true }).setView([40.4168, -3.7038], 12);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+      maxZoom: 19, subdomains: "abcd",
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>',
+    }).addTo(mapa);
+    Object.entries(DISTRITOS).forEach(([n, ll]) => L.marker(ll, { interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "etiqueta-distrito", html: n, iconSize: null }) }).addTo(mapa));
+    capa = L.featureGroup().addTo(mapa);
+  }
+
+  function dato(et, val, fuente) {
+    return `<dt>${et}</dt><dd>${val}${fuente ? `<span class="fte">Fuente: ${fuente}</span>` : ""}</dd>`;
+  }
+
+  function abrir(id, sinHash) {
+    const o = OBRAS.find(x => x.id === id); if (!o) return;
+    document.querySelectorAll(".obra.activa").forEach(b => b.classList.remove("activa"));
+    document.querySelectorAll(`.obra[data-id="${CSS.escape(id)}"]`).forEach(b => b.classList.add("activa"));
+    const P = "Plataforma de Contratación", A = "Ayuntamiento · Obras en ejecución";
+    const pl = o.plazo ? `${o.plazo} ${(PLAZO[o.plazo_unidad] || ["", ""])[o.plazo == 1 ? 0 : 1]}` : "—";
+    const hitos = [
+      ["Adjudicación", o.fecha_adjudicacion, true],
+      ["Inicio de la obra", o.fecha_inicio, true],
+      ["Fin previsto", o.fin_previsto, false],
+      ["Fin teórico (inicio + plazo)", o.fin_teorico, false],
+      ["Fin real", o.fin_real, true],
+    ].filter(h => h[1]);
+    const hist = (o.historial || []).map(h => `<li class="hecho"><span class="f">${fecha(h.fecha)}</span> · ${h.cambios
+      ? "Cambió: " + esc(h.cambios.join(", ")) : "Primera vez que aparece"} <span class="fte">${h.fuente === "placsp" ? P : A}</span></li>`).join("");
+
+    $("#ficha").innerHTML = `
+      <div class="cab">${pill(o.estado)}<button class="cerrar" id="cerrar">Cerrar</button></div>
+      <div class="ficha-in">
+        <div>
+          <h2 id="ficha-titulo">${esc(o.titulo)}</h2>
+          <div class="exp">Expediente ${esc(o.expediente)}</div>
+        </div>
+        <div class="bloque"><h4>Dinero (sin IVA)</h4>
+          <div class="dinero">
+            <div class="cifra"><span>Presupuesto de licitación</span><strong>${eur(o.licitacion)}</strong></div>
+            <div class="cifra"><span>Importe de adjudicación</span><strong>${eur(o.adjudicacion)}</strong></div>
+          </div>
+          ${o.baja_pct != null ? `<p class="nota">Baja: <span class="num">${o.baja_pct.toLocaleString("es-ES")} %</span> (adjudicación frente a licitación)</p>` : ""}
+        </div>
+        <div class="bloque"><h4>Qué, dónde y quién</h4><dl class="datos">
+          ${dato("Paga", esc(o.paga))}
+          ${dato("Órgano que contrata", esc(o.organo || "—"), o.organo ? P : "")}
+          ${dato("Empresa", esc(o.empresa || "Sin adjudicar"), o.empresa ? P : "")}
+          ${dato("Distrito", esc(o.distrito || "—"))}
+          ${o.viales ? dato("Calles afectadas", esc(o.viales), A) : ""}
+          ${dato("Ubicación en el mapa", o.ubicacion === "aproximada" ? "Aproximada (centro del distrito)" : "Sin ubicación")}
+        </dl></div>
+        <div class="bloque"><h4>Plazos</h4>
+          <dl class="datos">${dato("Plazo del contrato", pl, o.plazo ? P : "")}
+          ${o.estado_obra ? dato("Estado según el Ayuntamiento", esc(o.estado_obra), A) : ""}
+          ${o.desviacion_dias != null ? dato("Desviación de plazo", `<span class="num">${o.desviacion_dias > 0 ? "+" : ""}${o.desviacion_dias} días</span> (fin real frente a fin previsto)`) : ""}
+          ${o.penalidades ? dato("Penalidades", esc(o.penalidades), A) : ""}</dl>
+          ${hitos.length ? `<ol class="linea" style="margin-top:14px">${hitos.map(h => `<li class="${h[2] ? "hecho" : ""}"><span class="f">${fecha(h[1])}</span> · ${h[0]}</li>`).join("")}</ol>` : ""}
+        </div>
+        <div class="bloque"><h4>Historial de cambios</h4>
+          ${hist ? `<ol class="linea">${hist}</ol>` : `<p class="nota">Sin cambios registrados.</p>`}
+        </div>
+        <div class="bloque"><h4>Fuentes</h4><div class="fuentes">
+          ${o.fuentes.map(f => `<div>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nombre)}</a>` : esc(f.nombre)}${f.fecha ? `<span class="fte">Actualizado en la fuente: ${fecha(f.fecha)}</span>` : ""}</div>`).join("")}
+        </div></div>
+      </div>`;
+    $("#ficha").hidden = false;
+    $("#cerrar").addEventListener("click", cerrar);
+    $("#cerrar").focus();
+    const m = marcadores.get(id); if (m && mapa) mapa.panTo(m.getLatLng());
+    if (!sinHash) history.replaceState(null, "", "#" + token(o.id));
+  }
+  function cerrar() { $("#ficha").hidden = true; history.replaceState(null, "", "#" + (vistaActual || "mapa")); }
+
+  let vistaActual = "mapa";
+  function ver(v) {
+    vistaActual = v;
+    document.querySelectorAll(".vista").forEach(s => s.hidden = s.id !== "v-" + v);
+    document.querySelectorAll("nav.tabs a").forEach(a => a.dataset.v === v
+      ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    if (v === "mapa" && mapa) setTimeout(() => mapa.invalidateSize(), 0);
+    if (v === "archivo") pintarArchivo();
+    if (v === "cifras") pintarCifras();
+  }
+
+  function pintarArchivo() {
+    const d = $("#arch-distrito").value, q = norm(estado.q);
+    const filtra = o => (!d || o.distrito === d) && (!q || norm([o.titulo, o.viales, o.distrito, o.empresa, o.expediente].join(" ")).includes(q));
+    const ter = OBRAS.filter(o => o.estado === "terminada" && filtra(o));
+    const porAnio = {};
+    ter.forEach(o => { const a = (o.fin_real || "").slice(0, 4) || o.anio; (porAnio[a] ||= []).push(o); });
+    $("#arch-cuenta").textContent = `${ter.length} obras terminadas`;
+    $("#arch-lista").innerHTML = Object.keys(porAnio).sort().reverse().map(a =>
+      `<div class="anio"><div class="num">${a}</div><div class="obras-anio">${porAnio[a].map(itemHTML).join("")}</div></div>`).join("")
+      || `<p class="vacio">No hay obras terminadas con estos filtros.</p>`;
+    const limite = new Date().getFullYear() - 3;
+    const viejas = OBRAS.filter(o => o.estado === "adjudicada" && o.anio <= limite && filtra(o));
+    $("#arch-sin-fin").innerHTML = viejas.length ? `<div class="obras-anio" style="display:grid;gap:2px">${viejas.map(itemHTML).join("")}</div>` : `<p class="vacio">Ninguno.</p>`;
+  }
+
+  function pintarCifras() {
+    const filas = {};
+    OBRAS.filter(o => o.estado !== "anulada").forEach(o => {
+      const k = o.distrito || "Sin distrito";
+      const f = filas[k] ||= { n: 0, imp: 0, ter: 0, dev: [] };
+      f.n++; f.imp += o.adjudicacion || 0; if (o.estado === "terminada") f.ter++;
+      if (o.desviacion_dias != null) f.dev.push(o.desviacion_dias);
+    });
+    const orden = Object.entries(filas).sort((a, b) => b[1].imp - a[1].imp);
+    $("#t-distritos").innerHTML = `<thead><tr><th>Distrito</th><th class="n">Obras</th><th class="n">Adjudicado</th><th class="n">Terminadas</th><th class="n">Desviación media</th></tr></thead><tbody>` +
+      orden.map(([k, f]) => `<tr><td>${esc(k)}</td><td class="n num">${f.n}</td><td class="n num">${eur(f.imp)}</td><td class="n num">${f.ter}</td><td class="n num">${f.dev.length ? Math.round(f.dev.reduce((a, b) => a + b, 0) / f.dev.length) + " días" : "—"}</td></tr>`).join("") + "</tbody>";
+    const emp = {};
+    OBRAS.filter(o => o.empresa).forEach(o => { const e = emp[o.empresa] ||= { n: 0, imp: 0 }; e.n++; e.imp += o.adjudicacion || 0; });
+    $("#t-empresas").innerHTML = `<thead><tr><th>Empresa</th><th class="n">Contratos</th><th class="n">Adjudicado</th></tr></thead><tbody>` +
+      Object.entries(emp).sort((a, b) => b[1].n - a[1].n || b[1].imp - a[1].imp).slice(0, 15)
+        .map(([k, e]) => `<tr><td>${esc(k)}</td><td class="n num">${e.n}</td><td class="n num">${eur(e.imp)}</td></tr>`).join("") + "</tbody>";
+  }
+
+  function desdeHash() {
+    const h = location.hash.slice(1);
+    if (h.startsWith("obra-")) { const o = OBRAS.find(x => token(x.id) === h); ver("mapa"); if (o) abrir(o.id, true); return; }
+    ver(["mapa", "archivo", "cifras", "glosario"].includes(h) ? h : "mapa");
+  }
+
+  async function arrancar() {
+    let datos = window.__OBRAS;
+    if (!datos) {
+      try { datos = await (await fetch("data/obras.json", { cache: "no-cache" })).json(); }
+      catch (e) { $("#items").innerHTML = `<p class="vacio gutter">No se han podido cargar los datos. Vuelve a intentarlo en unos minutos.</p>`; return; }
+    }
+    OBRAS = datos.obras; META = datos.meta || {};
+    $("#actualizado").textContent = `Datos oficiales · actualizado el ${fecha(META.generado)}`;
+    if (META.aviso) { $("#aviso").textContent = META.aviso; $("#aviso").hidden = false; }
+    if (!META.prevista) $("#descarga").innerHTML = `<a class="boton" href="data/obras.csv">Descargar todas las obras (CSV)</a>`;
+    else $("#descarga").innerHTML = `<span class="nota">En la web publicada aquí aparece el enlace para descargar todas las obras en CSV.</span>`;
+    const dists = [...new Set(OBRAS.map(o => o.distrito).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
+    $("#arch-distrito").innerHTML = `<option value="">Todos los distritos</option>` + dists.map(d => `<option>${esc(d)}</option>`).join("");
+    $("#arch-distrito").addEventListener("change", pintarArchivo);
+
+    pintarFiltros(); iniciarMapa(); pintarLista(true);
+    document.addEventListener("click", ev => { const b = ev.target.closest(".obra"); if (b) abrir(b.dataset.id); });
+    document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !$("#ficha").hidden) cerrar(); });
+    let t; $("#q").addEventListener("input", ev => { clearTimeout(t); t = setTimeout(() => {
+      estado.q = ev.target.value.trim(); pintarLista(true); if (vistaActual === "archivo") pintarArchivo(); }, 150); });
+    document.querySelectorAll("nav.tabs a").forEach(a => a.addEventListener("click", ev => { ev.preventDefault(); $("#ficha").hidden = true; history.replaceState(null, "", "#" + a.dataset.v); ver(a.dataset.v); }));
+    window.addEventListener("hashchange", desdeHash);
+    desdeHash();
+  }
+  arrancar();
+})();
+</script>
