@@ -37,6 +37,9 @@ jobs:
         run: python -m pytest -q
 
       - name: Descargar fuentes, cruzar y guardar
+        timeout-minutes: ${{ github.event.inputs.desde != '' && 300 || 45 }}
+        env:
+          PYTHONUNBUFFERED: "1"
         run: |
           if [ -n "${{ github.event.inputs.desde }}" ]; then
             python cargar.py --desde "${{ github.event.inputs.desde }}"

@@ -8,6 +8,7 @@ from __future__ import annotations
 import io
 import re
 import tempfile
+import time
 import unicodedata
 import zipfile
 from dataclasses import dataclass, asdict, field
@@ -183,44 +184,69 @@ def parsear_feed(xml_bytes: bytes) -> tuple[list[Expediente], list[str], Optiona
     return exps, borrados, sig.get("href") if sig is not None else None
 
 
-def _get(url: str) -> bytes:
+def log(msg: str) -> None:
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
+
+
+def _descargar(url: str, destino, limite_s: int) -> int:
+    """Descarga por trozos con un tiempo máximo TOTAL (requests solo limita cada lectura)."""
+    inicio, total, aviso = time.monotonic(), 0, 0
     try:
-        r = requests.get(url, headers=HEADERS, timeout=120)
-        r.raise_for_status()
-        return r.content
+        with requests.get(url, headers=HEADERS, timeout=(20, 60), stream=True) as r:
+            r.raise_for_status()
+            for trozo in r.iter_content(1 << 20):
+                destino.write(trozo)
+                total += len(trozo)
+                t = time.monotonic() - inicio
+                if t > limite_s:
+                    raise FuenteError(f"{url} tarda más de {limite_s} s ({total >> 20} MB descargados)")
+                if total >> 20 >= aviso + 50:
+                    aviso = total >> 20
+                    log(f"   … {aviso} MB en {t:.0f} s")
     except requests.RequestException as e:
         raise FuenteError(f"No responde {url}: {e}") from e
+    return total
+
+
+def _get(url: str, limite_s: int = 180) -> bytes:
+    buf = io.BytesIO()
+    _descargar(url, buf, limite_s)
+    return buf.getvalue()
 
 
 def leer_feed_paginado(url: str, max_paginas: int = 0) -> Iterator[Expediente]:
     """Recorre el feed siguiendo rel='next' (la Plataforma pagina de 500 en 500)."""
     n = 0
     while url:
-        exps, _, url = parsear_feed(_get(url))
-        yield from exps
+        t = time.monotonic()
+        datos = _get(url)
+        exps, _, url = parsear_feed(datos)
         n += 1
+        fechas = [e.actualizado_fuente for e in exps if e.actualizado_fuente]
+        log(f"Feed página {n}: {len(exps)} entradas, {len(datos) >> 10} KB, {time.monotonic() - t:.1f} s"
+            + (f" (hasta {min(fechas)[:10]})" if fechas else ""))
+        yield from exps
         if max_paginas and n >= max_paginas:
             break
 
 
-def leer_zip_mensual(url: str) -> Iterator[Expediente]:
+def leer_zip_mensual(url: str, limite_s: int = 1800) -> Iterator[Expediente]:
     """Descarga un zip (mensual o anual) a disco, no a memoria: los anuales pesan cientos de MB."""
+    log(f"Descargando {url.rsplit('/', 1)[-1]}")
     with tempfile.TemporaryFile() as tmp:
-        try:
-            with requests.get(url, headers=HEADERS, timeout=600, stream=True) as r:
-                r.raise_for_status()
-                for trozo in r.iter_content(1 << 20):
-                    tmp.write(trozo)
-        except requests.RequestException as e:
-            raise FuenteError(f"No responde {url}: {e}") from e
+        t = time.monotonic()
+        mb = _descargar(url, tmp, limite_s) >> 20
+        log(f"   {mb} MB en {time.monotonic() - t:.0f} s")
         try:
             z = zipfile.ZipFile(tmp)
         except zipfile.BadZipFile as e:
             raise FuenteError(f"{url} no es un zip válido") from e
-        for nombre in sorted(z.namelist()):
-            if nombre.endswith(".atom"):
-                exps, _, _ = parsear_feed(z.read(nombre))
-                yield from exps
+        atoms = sorted(n for n in z.namelist() if n.endswith(".atom"))
+        for i, nombre in enumerate(atoms, 1):
+            exps, _, _ = parsear_feed(z.read(nombre))
+            if i % 20 == 0 or i == len(atoms):
+                log(f"   leídos {i}/{len(atoms)} ficheros del zip")
+            yield from exps
 
 
 def periodos_desde(desde: str, hoy: Optional[date] = None) -> list[str]:

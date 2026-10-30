@@ -28,7 +28,7 @@ import yaml
 from obras import db
 from obras.excel_ayto import leer_excel_obras
 from obras.placsp import (FuenteError, clave_expediente, es_de_madrid, leer_feed_paginado,
-                          leer_zip_mensual, parsear_feed, periodos_desde)
+                          leer_zip_mensual, log, parsear_feed, periodos_desde)
 
 
 def periodos_recientes(n: int) -> list[str]:
@@ -47,7 +47,7 @@ def recoger_placsp(cfg: dict, atom_local: list[str], desde: str | None = None) -
         fuentes = [parsear_feed(Path(a).read_bytes())[0] for a in atom_local]
     else:
         periodos = periodos_desde(desde) if desde else periodos_recientes(p.get("meses_recientes", 2))
-        print("Periodos PLACSP:", ", ".join(periodos))
+        log("Periodos PLACSP: " + ", ".join(periodos))
         fuentes = [leer_zip_mensual(p["zip_mensual"].format(yyyymm=m)) for m in periodos]
         fuentes.append(leer_feed_paginado(p["feed_actual"], p.get("max_paginas", 0)))
 
@@ -68,7 +68,7 @@ def recoger_placsp(cfg: dict, atom_local: list[str], desde: str | None = None) -
             prev = elegidos.get(clave)
             if prev is None or (d["actualizado_fuente"] or "") >= (prev["actualizado_fuente"] or ""):
                 elegidos[clave] = d
-    print(f"PLACSP: {vistos} entradas leídas, {len(elegidos)} obras del Ayuntamiento de Madrid")
+    log(f"PLACSP: {vistos} entradas leídas, {len(elegidos)} obras del Ayuntamiento de Madrid")
     return elegidos
 
 
